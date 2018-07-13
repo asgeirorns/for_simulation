@@ -1,11 +1,8 @@
-#TODO: Er enntha ad vinna i adgerdartimum 
-
 #Bua til gogn fyrir hermun
 
 rm(list=ls())
 load("adkort.Rdata")
 library(jsonlite)
-
 
 
 Pat_list <- fromJSON("getWaitinglist_all_year.json", flatten=TRUE)
@@ -112,10 +109,8 @@ for(surg in Unique_surg){
    
      for(i in (1:nrow(new_df))){
       idx= which(new_df$laeknir[i] == surg)
-      print(surg)
-      print(idx)
       if(length(idx)>0){
-        cat(paste0('"',new_df$kort[i],'-',new_df$kt[i],'"','\t',new_df$Ward[i],'\t',new_df$ICU[i],'\n'),file=fname ,sep="", append=TRUE)
+        cat(paste0('"',new_df$kt[i],'-',new_df$kort[i],'"','\t',new_df$Ward[i],'\t',new_df$ICU[i],'\n'),file=fname ,sep="", append=TRUE)
 }
 }
 
@@ -131,28 +126,28 @@ for(surg in Unique_surg){
     fname= paste0("Surgery_duration",'_',gsub(" ", "", surg),'.txt')
 
 for (i in c(1:nrow(Pat_list_df))){
+  idxy = which(Pat_list_df$OrbitOperation.RequestedOperator_Name[i] == surg)
+  if(length(idxy)>0){
     adge = Pat_list_df$OrbitOperation.OperationCard[i] #ur bidlista
     laeknir = Pat_list_df$OrbitOperation.RequestedOperator_Name[i] #ur bidlista
     kt = Pat_list_df$OrbitOperation.PatientSSN[i] #ur bidlista
     idx = which(adkort$Adgerdakort==adge & adkort$Laeknir==laeknir 
                 & adkort$AdgerdaTimi<=24*60 & adkort$AdgerdaTimi>0 &adge %in% adkort$Adgerdakort
-                & adkort$Skurdstofutimi>0 & Pat_list_df$OrbitOperation.RequestedOperator_Name[i] == surg)
-    cat(paste0('"',adge,'"','-',kt), sep="", file=fname ,append=TRUE)
-    if(length(idx)<10){
+                & adkort$Skurdstofutimi>0 )
+    
+    cat(paste0('"',kt,'-',adge,'"'), sep="", file=fname ,append=TRUE)
+    
+    if(length(idx)<10 | length(idx)>0){
       # Notum tima  annara ef thad finnst ekki annar 
       idx = which(adkort$Adgerdakort==adge &
                     adkort$AdgerdaTimi<=24*60 & adkort$AdgerdaTimi>0 & adge %in% adkort$Adgerdakort
-                  & adkort$Skurdstofutimi>0 & Pat_list_df$OrbitOperation.RequestedOperator_Name[i] == surg)
+                  & adkort$Skurdstofutimi>0)
     }
     idx <- rev(idx)
     idx <- idx[1:min(10,length(idx))]
     cat(paste(adkort$Skurdstofutimi[idx],'\t'),file=fname, sep="", append=TRUE)
     cat(" ",file=fname,sep="\n", append=TRUE)
 }
+      
 }}
-
-
-
-
-
-
+}
