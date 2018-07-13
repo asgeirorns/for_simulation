@@ -1,5 +1,5 @@
 #Bua til gogn fyrir hermun
-#Thad sem tharf ad gera er ad sampla ur somu dreifingu thar sem stokin eru t.d. bara 7 en ekki 10
+#Thad sem tharf ad gera er ad sampla ur somu dreifingu thar sem stokin eru t.d. bara 7 en ekki 10 fyrir skurdtima - annad komid
 rm(list=ls())
 load("adkort.Rdata")
 library(jsonlite)
