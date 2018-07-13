@@ -1,5 +1,5 @@
 #Bua til gogn fyrir hermun
-#Thad sem tharf ad gera er ad sampla ur somu dreifingu thar sem stokin eru t.d. bara 7 en ekki 10 fyrir skurdtima - annad komid
+
 rm(list=ls())
 load("adkort.Rdata")
 library(jsonlite)
@@ -48,7 +48,7 @@ new_df <- data.frame(kort, kt, Ward, ICU, laeknir)
 #Filterum ut
 idx = which(as.Date(Pat_list_df$OrbitOperation.PlannedStartTime_Date) >= Start_date & as.Date(Pat_list_df$OrbitOperation.PlannedStartTime_Date) <=End_date & 
               Pat_list_df$OrbitOperation.OperationSpecialty %in% c('Hb. Alm.') & !Pat_list_df$OrbitOperation.OperationType  %in% c('Bráðaaðgerð') &
-              !Pat_list_df$OrbitOperation.RequestedOperator_Name %in% c('Þorvaldur Jónsson'))
+              !Pat_list_df$OrbitOperation.RequestedOperator_Name %in% c('Þorvaldur Jónsson') & !Pat_list_df$OrbitOperation.OperationRoom %in% c('Kv. Stofa 21'))
 Pat_list_df <- Pat_list_df[idx,]
 new_df <- new_df[idx,]
 
@@ -118,8 +118,6 @@ for(surg in Unique_surg){
   }}
 
 
-
-
 for(surg in Unique_surg){
   idxx=which(surg==Pat_list_df$OrbitOperation.RequestedOperator_Name)
   if(length(idxx)>0){
@@ -137,17 +135,26 @@ for (i in c(1:nrow(Pat_list_df))){
     
     cat(paste0('"',kt,'-',adge,'"'), sep="", file=fname ,append=TRUE)
     
-    if(length(idx)<10 | length(idx)>0){
-      # Notum tima  annara ef thad finnst ekki annar 
+    if(length(idx)<10){
+      # Notum tima  annara ef thad finnst ekki 
       idx = which(adkort$Adgerdakort==adge &
                     adkort$AdgerdaTimi<=24*60 & adkort$AdgerdaTimi>0 & adge %in% adkort$Adgerdakort
                   & adkort$Skurdstofutimi>0)
     }
     idx <- rev(idx)
     idx <- idx[1:min(10,length(idx))]
-    cat(paste(adkort$Skurdstofutimi[idx],'\t'),file=fname, sep="", append=TRUE)
+    cat(paste('\t',adkort$Skurdstofutimi[idx],'\t'),file=fname, sep="", append=TRUE)
     cat(" ",file=fname,sep="\n", append=TRUE)
 }
       
 }}
 }
+
+
+
+
+
+
+
+
+
